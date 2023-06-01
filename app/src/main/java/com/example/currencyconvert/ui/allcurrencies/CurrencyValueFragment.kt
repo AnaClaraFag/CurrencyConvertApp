@@ -8,12 +8,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.activityViewModels
 import com.example.currencyconvert.R
 import com.example.currencyconvert.core.data.response.toCurrencyData
 import com.example.currencyconvert.core.extensions.repeatWhenStarted
+import com.example.currencyconvert.core.utils.Validators
 import com.example.currencyconvert.databinding.FragmentCurrencyValueBinding
+import com.example.currencyconvert.ui.CurrenciesValueViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -23,7 +24,7 @@ class CurrencyValueFragment : Fragment() {
     private var _binding: FragmentCurrencyValueBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CurrenciesValueViewModel by viewModels()
+    private val viewModel: CurrenciesValueViewModel by activityViewModels()
 
     private var adapter = CurrencyValueListAdapter(hashMapOf())
 
@@ -48,7 +49,7 @@ class CurrencyValueFragment : Fragment() {
         viewLifecycleOwner.repeatWhenStarted {
             launch {
                 viewModel.isLoading.collect { isVisible ->
-                    binding.progressBar.apply {
+                    binding.progressBarCurrencyListName.apply {
                         visibility = if (isVisible) View.VISIBLE
                         else View.GONE
                     }
@@ -90,10 +91,11 @@ class CurrencyValueFragment : Fragment() {
             }
             launch {
                 viewModel.currencySelected.collect {
-                    if (it != null) viewModel.getCurrencyValueAroundTheWorld(it.description)
-                    else {
-                        Toast.makeText(requireContext(), "Error", Toast.LENGTH_LONG).show()
+                    val selectedIndex = viewModel.currencyNameList.value.indexOf(it)
+                    if (selectedIndex != -1) {
+                        binding.currencySpinner.setSelection(selectedIndex)
                     }
+                    if (it != null) viewModel.getCurrencyValueAroundTheWorld(it.description)
                 }
             }
 
@@ -101,10 +103,32 @@ class CurrencyValueFragment : Fragment() {
                 viewModel.currenciesList.collect {
                     if (it != null) {
                         val rates = it.rates.toCurrencyData()
-                        adapter.hashMapOfSymbolAndValue = rates
+                        val selectedCurrency = viewModel.currencySelected.value?.description
+                        if (Validators.validateCurrencySelected(
+                                selectedCurrency ?: "USD",
+                                rates.toList()
+                            )
+                        ) {
+                            rates.remove(selectedCurrency)
+                            adapter.setDataSet(rates)
+                        }
                     }
+                }
+            }
+            launch {
+                viewModel.currencyValueIsLoading.collect { isLoading ->
+                    if (isLoading) {
+                        binding.rvCurrencyListValue.visibility = View.GONE
+                        binding.progressBarCurrencyValueList.visibility = View.VISIBLE
+                    } else {
+                        binding.rvCurrencyListValue.visibility = View.VISIBLE
+                        binding.progressBarCurrencyValueList.visibility = View.GONE
+                    }
+
                 }
             }
         }
     }
+
+
 }

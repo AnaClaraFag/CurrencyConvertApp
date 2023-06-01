@@ -1,7 +1,7 @@
 package com.example.currencyconvert.core.di
 
 import com.example.currencyconvert.core.api.CurrencyApi
-import com.example.currencyconvert.core.utils.CurrencyAppConstants.Companion.BASE_URL
+import com.example.currencyconvert.core.utils.CurrencyAppConstants
 import com.haroldadmin.cnradapter.NetworkResponseAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -31,7 +31,7 @@ object RetrofitModule {
         moshi: Moshi
     ):Retrofit{
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(CurrencyAppConstants.BASE_URL)
             .client(okHttpClient)
             .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(MoshiConverterFactory.create(moshi))

@@ -2,13 +2,15 @@ package com.example.currencyconvert.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph
+import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.currencyconvert.R
 import com.example.currencyconvert.databinding.ActivityMainBinding
-import com.example.currencyconvert.ui.allcurrencies.CurrencyValueFragment
-import com.example.currencyconvert.ui.converter.CurrencyConverterFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,26 +34,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        navController = findNavController(R.id.nav_host_fragment)
 
-        binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
-            when(menuItem.itemId){
-                R.id.currencyValueFragment -> replaceFragment(CurrencyValueFragment())
-                R.id.currencyConverterFragment -> replaceFragment(CurrencyConverterFragment())
-                R.id.historyCurrencyValueFragment -> replaceFragment(HistoryCurrencyValueFragment())
-                else -> replaceFragment(CurrencyValueFragment())
+        navController?.let { navController ->
+            binding.bottomNavigation.setOnItemReselectedListener { itemMenu ->
+                val selectedMenuItemGraph =
+                    navController.graph.findNode(itemMenu.itemId) as? NavGraph?
+
+                selectedMenuItemGraph?.let { navGraph ->
+                    navController.popBackStack(navGraph.startDestinationId, false)
+                }
             }
-            true
+            binding.bottomNavigation.setupWithNavController(navController)
+            setupActionBarWithNavController(navController, appBarConfiguration)
         }
-
-        replaceFragment(CurrencyValueFragment())
-
     }
 
-    private fun replaceFragment(fragment: Fragment){
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.nav_host_fragment, fragment)
-        fragmentTransaction.commitNow()
-    }
+  override fun onSupportNavigateUp(): Boolean {
+      return navController?.navigateUp(appBarConfiguration)?: true
+  }
+
+
 }
 
 

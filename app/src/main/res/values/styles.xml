@@ -12,6 +12,12 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="body_regular18">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/oxfordstreet</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="body_medium">
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/oxfordstreet</item>
@@ -22,6 +28,11 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/oxfordstreet</item>
         <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:divider">#1A707070</item>
+        <item name="android:dividerHeight">1dp</item>
     </style>
 
 </resources>

@@ -10,4 +10,9 @@
     <string name="home">Home</string>
     <string name="exchange_currency">Exchange currency</string>
     <string name="history">History</string>
+    <string name="currency">Currency</string>
+    <string name="rates">Rates:</string>
+    <string name="convert">Convert</string>
+    <string name="reference_date">Reference date:</string>
+    <string name="value_to_convert">Value to convert</string>
 </resources>

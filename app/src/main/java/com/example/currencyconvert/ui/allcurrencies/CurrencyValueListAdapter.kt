@@ -2,6 +2,7 @@ package com.example.currencyconvert.ui.allcurrencies
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,11 @@ class CurrencyValueListAdapter(
         return hashMapOfSymbolAndValue.size
     }
 
+    fun setDataSet(currencies: HashMap<String, Any>) {
+        this.hashMapOfSymbolAndValue = currencies
+        notifyDataSetChanged()
+    }
+
     private fun convertAnyInMonetaryFormat(item: Any) =
         item.toString().toDouble().convertDoubleToMonetaryFormat()
 
@@ -36,10 +42,10 @@ class CurrencyValueListAdapter(
         try {
             val keys: List<String> = hashMapOfSymbolAndValue.keys.toList()
             val key = keys[position]
-            //holder.symbol = key
             val value = convertAnyInMonetaryFormat(hashMapOfSymbolAndValue[key] ?: 0)
-            //holder.currencyValue = value
+
             holder.bind(key, value)
+
 
         } catch (e: Exception) {
             Log.e("LIST", "$e")
@@ -54,12 +60,12 @@ class CurrencyValueListViewHolder(
     val binding: CurrencyListItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
- fun bind(coin: String, value: String){
-     binding.currencyValue.text = coin
-     binding.currencyName.text = value
- }
-       /* var currencyValue =
-        var symbol = */
+    fun bind(coin: String, value: String) {
+        binding.currencyValue.text = value
+        binding.currencyName.text = coin
+    }
+    /* var currencyValue =
+     var symbol = */
 
 
 }

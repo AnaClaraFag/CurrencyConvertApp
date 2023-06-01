@@ -1,5 +1,6 @@
 package com.example.currencyconvert.core.api
 
+import com.example.currencyconvert.core.data.response.CurrencyConvertedResponse
 import com.example.currencyconvert.core.data.response.CurrencySymbolsResponse
 import com.example.currencyconvert.core.data.response.LatestRatesResponse
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -16,5 +17,12 @@ interface CurrencyApi {
     @GET("symbols")
     suspend fun getCurrencyNamesAndSymbols(
     ): NetworkResponse<CurrencySymbolsResponse, String>
+
+    @GET("convert")
+    suspend fun convertFromTo(
+        @Query("from") from:String,
+        @Query("to") to: String,
+        @Query("amount") amount: String
+    ):NetworkResponse<CurrencyConvertedResponse, String>
 
 }

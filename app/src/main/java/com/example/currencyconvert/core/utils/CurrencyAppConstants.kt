@@ -1,8 +1,9 @@
 package com.example.currencyconvert.core.utils
 
-class CurrencyAppConstants {
+object CurrencyAppConstants {
 
-    companion object{
-         val BASE_URL = "https://api.exchangerate.host/"
-    }
+    val BASE_URL = "https://api.exchangerate.host/"
+
+    val MAX_NUMBERS = 9
+
 }
