@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.currencyconvert.R
@@ -102,15 +101,18 @@ class CurrencyValueFragment : Fragment() {
             launch {
                 viewModel.currenciesList.collect {
                     if (it != null) {
-                        val rates = it.rates.toCurrencyData()
+                        val rates = it.rates?.toCurrencyData()
                         val selectedCurrency = viewModel.currencySelected.value?.description
                         if (Validators.validateCurrencySelected(
                                 selectedCurrency ?: "USD",
-                                rates.toList()
+                                rates?.toList() ?: listOf()
                             )
                         ) {
-                            rates.remove(selectedCurrency)
-                            adapter.setDataSet(rates)
+                            rates?.let{
+                                it.remove(selectedCurrency)
+                                adapter.setDataSet(rates)
+                            }
+
                         }
                     }
                 }

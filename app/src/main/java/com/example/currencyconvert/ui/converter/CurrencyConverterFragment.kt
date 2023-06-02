@@ -96,21 +96,20 @@ class CurrencyConverterFragment : Fragment() {
 
     private fun setTextWatcherUserInput() {
         binding.valueToConvert.doAfterTextChanged {
-            if(Validators.validateValueUserInput(it.toString())){
+            if (Validators.validateValueUserInput(it.toString())) {
                 binding.buttonConvert.isEnabled = true
                 viewModel.amountToConvert.value = it.toString()
-            }
-            else{
+            } else {
                 binding.valueToConvert.setError("You need to enter valid data")
             }
-            if(it.isNullOrBlank()){
+            if (it.isNullOrBlank()) {
                 binding.valueToConvert.error = null
                 binding.buttonConvert.isEnabled = false
+                viewModel.valueConverted.value = "0"
             }
 
         }
     }
-
 
     fun convertCurrency() {
         viewModel.getCurrencyConversion()
