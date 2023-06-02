@@ -3,22 +3,23 @@ package com.example.currencyconvert.ui
 import app.cash.turbine.test
 import com.example.currencyconvert.MainDispatcherRule
 import com.example.currencyconvert.core.data.models.CurrencySymbols
-import com.example.currencyconvert.core.data.repository.CurrencyRepository
+import com.example.currencyconvert.core.data.repository.ICurrencyRepository
 import com.haroldadmin.cnradapter.NetworkResponse
-import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import javax.inject.Inject
+import retrofit2.Response
 
-@HiltAndroidTest
-@RunWith(JUnit4::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class CurrenciesValueViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
@@ -26,15 +27,19 @@ class CurrenciesValueViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = MainDispatcherRule()
 
-    @Inject
-    private var repository= mockk<CurrencyRepository>()
+    private var repository = mock<ICurrencyRepository>()
     private lateinit var viewModel: CurrenciesValueViewModel
 
     @Before
     fun setup() {
+        Dispatchers.setMain(testDispatcher)
         viewModel = CurrenciesValueViewModel(repository)
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `test currency name list request and update`() =
@@ -42,12 +47,18 @@ class CurrenciesValueViewModelTest {
         runTest(testDispatcher) {
             val currencySymbols =
                 arrayListOf(CurrencySymbols("USD", "United States Dollar"))
-            val networkResponse = currencySymbols
-                    as NetworkResponse<ArrayList<CurrencySymbols>, String>
+            val response: Response<String> = Response.success("")
+            val networkResponse: NetworkResponse<ArrayList<CurrencySymbols>, String> =
+                 NetworkResponse.Success(currencySymbols, response)
+
 
             whenever(
                 repository.getCurrencyNamesAndSymbols()
             ).thenReturn(networkResponse)
+
+            /* networkResponse.doOnSuccess {
+                 assert(it.isNotEmpty())
+             }*/
 
 
             viewModel.currencyNameList.test {
@@ -55,16 +66,11 @@ class CurrenciesValueViewModelTest {
                 val value = awaitItem()
                 assert(value.isNotEmpty())
             }
-
-
         }
 
     @Test
-    fun getCurrencyNameList() {
-    }
+    fun `check if currency selection changes`() {
 
-    @Test
-    fun getCurrencySelected() {
     }
 
     @Test

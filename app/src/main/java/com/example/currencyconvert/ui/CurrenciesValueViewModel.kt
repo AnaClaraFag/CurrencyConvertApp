@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencyconvert.core.data.models.CurrencySymbols
-import com.example.currencyconvert.core.data.repository.CurrencyRepository
+import com.example.currencyconvert.core.data.repository.ICurrencyRepository
 import com.example.currencyconvert.core.data.response.LatestRatesResponse
 import com.example.currencyconvert.core.extensions.doOnError
 import com.example.currencyconvert.core.extensions.doOnSuccess
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrenciesValueViewModel @Inject constructor(
-    private val repository: CurrencyRepository
+    private val repository: ICurrencyRepository
 ) : ViewModel() {
 
     val currenciesList = MutableStateFlow<LatestRatesResponse?>(null)
@@ -32,7 +32,6 @@ class CurrenciesValueViewModel @Inject constructor(
     val amountToConvert = MutableStateFlow<String?>(null)
     val valueConverted = MutableStateFlow<String?>(null)
     val referenceDateConversion = MutableStateFlow<String?>(null)
-
 
 
     init {
